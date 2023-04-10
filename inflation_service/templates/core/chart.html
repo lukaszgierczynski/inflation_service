@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<form metohd="GET" action="{% url 'index' %}">
+    {% for field in form %}
+        <div>
+            {{ field.label_tag }} {{ field }}
+        </div>
+        <br>
+    {% endfor %}
+
+
+    <button>Submit</button>
+
+    {% if form.errors %}
+        <br><br>
+        <div style="color:red;">
+            {% for field_errors in form.errors.values %}
+                {% for error in field_errors %}
+                    {{ error }}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</form>
+
+{{ chart|safe }}
+
+{% endblock content %}
