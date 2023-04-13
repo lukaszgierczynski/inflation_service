@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from .mixins import InflationYearlyData, create_graph
-import plotly.express as px
 from .forms import YearSelectForm, CategorySelectForm
 
 
@@ -10,12 +9,8 @@ from .forms import YearSelectForm, CategorySelectForm
 def index(request):
 
     inflation_yearly_data = InflationYearlyData()
-    year_list = inflation_yearly_data.get_year_list()
 
     form = YearSelectForm()
-
-    x = list(inflation_yearly_data.general_inflation.keys())
-    y = list(inflation_yearly_data.general_inflation.values())
 
     start_year = request.GET.get('start_year')
     end_year = request.GET.get('end_year')
@@ -23,27 +18,11 @@ def index(request):
     if start_year and end_year:
         form = YearSelectForm(data=request.GET)
         if form.is_valid():
-            index = x.index(int(start_year))
-            x = x[index:]
-            y = y[index:]
-
-            index = x.index(int(end_year))
-            x = x[:index+1]
-            y = y[:index+1]
-
-    fig = px.line(
-        x=x,
-        y=y,
-        title="Wartość inflacji w wybranym okresie",
-        labels={'x': 'Rok', 'y': 'Inflacja r/r [%]'}
-    )
-
-    fig.update_layout(title={
-        'font_size': 22,
-        'xanchor': 'center',
-        'x': 0.5
-    })
-    fig.update_xaxes(tickmode='linear', dtick=1)
+            fig = create_graph(inflation_yearly_data, ['ogółem'], start_year, end_year)
+        else:
+            fig = create_graph(inflation_yearly_data, ['ogółem'])
+    else:
+        fig = create_graph(inflation_yearly_data, ['ogółem'])
 
     chart = fig.to_html()
 

@@ -94,20 +94,3 @@ def create_graph(inflation_yearly_data, selected_categories, start_year=None, en
     fig.update_xaxes(tickmode='linear', dtick=1)
 
     return fig
-
-
-
-
-
-
-
-
-
-
-
-
-    fig = px.line(x=x, y=y)
-
-
-
-
