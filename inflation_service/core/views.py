@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .mixins import InflationYearlyData
+from .mixins import InflationYearlyData, create_graph
 import plotly.express as px
-from .forms import YearSelectForm
+from .forms import YearSelectForm, CategorySelectForm
 
 
 # Create your views here.
@@ -34,7 +34,7 @@ def index(request):
     fig = px.line(
         x=x,
         y=y,
-        title="Inflacja ogółem",
+        title="Wartość inflacji w wybranym okresie",
         labels={'x': 'Rok', 'y': 'Inflacja r/r [%]'}
     )
 
@@ -47,6 +47,35 @@ def index(request):
 
     chart = fig.to_html()
 
-    context = {'chart': chart, 'form': form, 'year_list': year_list}
+    context = {'chart': chart, 'form': form}
 
     return render(request, 'core/chart.html', context)
+
+
+def category_inflation(request):
+
+    inflation_yearly_data = InflationYearlyData()
+
+    form = CategorySelectForm()
+
+    categories = request.GET.get('options')
+    start_year = request.GET.get('start_year')
+    end_year = request.GET.get('end_year')
+
+    if categories is not None and start_year is not None and end_year is not None:
+        form = CategorySelectForm(request.GET)
+        if form.is_valid():
+            selected_categories = form.cleaned_data.get('options')
+            fig = create_graph(inflation_yearly_data, selected_categories, start_year, end_year)
+        else:
+            selected_categories = ['ogółem']
+            fig = create_graph(inflation_yearly_data, selected_categories)
+    else:
+        selected_categories = ['ogółem']
+        fig = create_graph(inflation_yearly_data, selected_categories)
+
+    chart = fig.to_html()
+
+    context = {'chart': chart, 'form': form}
+
+    return render(request, 'core/category_inflation.html', context)

@@ -1,6 +1,8 @@
 import requests
 import json
 import pprint
+import plotly.express as px
+import pandas as pd
 
 # {217230: 'ogółem', 217231: 'żywność i napoje bezalkoholowe', 217232: 'napoje alkoholowe i wyroby tytoniowe',
 # 217233: 'odzież i obuwie', 217234: 'mieszkanie', 217235: 'zdrowie', 217236: 'transport',
@@ -54,5 +56,58 @@ class InflationYearlyData:
         return year_list
 
 
-# a = InflationYearlyData()
-# print(pprint.pprint(a.inflation_in_all_categories))
+def create_graph(inflation_yearly_data, selected_categories, start_year=None, end_year=None):
+
+    x = inflation_yearly_data.get_year_list()
+    if start_year is not None and end_year is not None:
+        index = x.index(int(start_year))
+        x = x[index:]
+        index = x.index(int(end_year))
+        x = x[:index + 1]
+
+    inflation_in_all_categories = inflation_yearly_data.get_inflation_in_all_categories()
+    inflation_in_selected_categories = {k: v for k, v in inflation_in_all_categories.items() if k in selected_categories}
+    inflation_in_selected_cat_and_years = {}
+
+    for category, inflation in inflation_in_selected_categories.items():
+        inflation_in_selected_cat_and_years[category] = {}
+        for year, value in inflation.items():
+            if year in x:
+                inflation_in_selected_cat_and_years[category][year] = value
+
+    data_dict = {'x': x}
+
+    for category, inflation in inflation_in_selected_cat_and_years.items():
+        data_dict[category] = list(inflation.values())
+
+    df = pd.DataFrame(data_dict)
+
+    fig = px.line(df, x='x', y=selected_categories,
+        title="Wartość inflacji w wybranym okresie",
+        labels={'x': 'Rok', 'y': 'Inflacja r/r [%]'})
+
+    fig.update_layout(title={
+        'font_size': 22,
+        'xanchor': 'center',
+        'x': 0.5
+    })
+    fig.update_xaxes(tickmode='linear', dtick=1)
+
+    return fig
+
+
+
+
+
+
+
+
+
+
+
+
+    fig = px.line(x=x, y=y)
+
+
+
+

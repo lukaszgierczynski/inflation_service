@@ -1,12 +1,12 @@
 {% extends 'core/base.html' %}
 
 {% block title %}
-Wykres z inflacją ogółem
+Wykres z inflacją w poszczególnych kategoriach
 {% endblock title %}
 
 {% block content %}
 
-<form metohd="GET" action="{% url 'index' %}">
+<form metohd="GET" action="{% url 'category_inflation' %}">
     {% for field in form %}
         <div>
             {{ field.label_tag }} {{ field }}
@@ -32,7 +32,7 @@ Wykres z inflacją ogółem
 {{ chart|safe }}
 
 <div class="links">
-    <a href="{% url 'category_inflation' %}">Stwórz wykres z inflacją w poszczególnych kategoriach</a>
+    <a href="{% url 'index' %}">Wyświetl wykres z ogólną inflacją</a>
     <a href="{% url 'category_inflation' %}">Stwórz wykres z własną inflacją</a>
 </div>
 
