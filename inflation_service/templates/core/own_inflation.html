@@ -1,12 +1,13 @@
 {% extends 'core/base.html' %}
 
 {% block title %}
-Wykres z ogólną inflacją
+Wykres z własną inflacją
 {% endblock title %}
 
 {% block content %}
-
-<form metohd="GET" action="{% url 'index' %}">
+<h3>Wpisz wagi twoich wydatków w poszczególnych kategoriach.
+    Pamiętaj, że suma wag powinna być równa 100.</h3>
+<form metohd="GET" action="{% url 'own_inflation' %}" autocomplete="on">
     {% for field in form %}
         <div>
             {{ field.label_tag }} {{ field }}
@@ -32,8 +33,9 @@ Wykres z ogólną inflacją
 {{ chart|safe }}
 
 <div class="links">
+    <a href="{% url 'index' %}">Wyświetl wykres z ogólną inflacją</a>
     <a href="{% url 'category_inflation' %}">Stwórz wykres z inflacją w poszczególnych kategoriach</a>
-    <a href="{% url 'own_inflation' %}">Stwórz wykres z własną inflacją</a>
+
 </div>
 
 {% endblock content %}

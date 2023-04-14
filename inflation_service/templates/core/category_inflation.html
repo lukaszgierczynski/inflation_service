@@ -5,7 +5,6 @@ Wykres z inflacją w poszczególnych kategoriach
 {% endblock title %}
 
 {% block content %}
-
 <form metohd="GET" action="{% url 'category_inflation' %}">
     {% for field in form %}
         <div>
@@ -33,7 +32,7 @@ Wykres z inflacją w poszczególnych kategoriach
 
 <div class="links">
     <a href="{% url 'index' %}">Wyświetl wykres z ogólną inflacją</a>
-    <a href="{% url 'category_inflation' %}">Stwórz wykres z własną inflacją</a>
+    <a href="{% url 'own_inflation' %}">Stwórz wykres z własną inflacją</a>
 </div>
 
 {% endblock content %}

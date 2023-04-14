@@ -1,6 +1,5 @@
 import requests
 import json
-import pprint
 import plotly.express as px
 import pandas as pd
 
@@ -94,3 +93,45 @@ def create_graph(inflation_yearly_data, selected_categories, start_year=None, en
     fig.update_xaxes(tickmode='linear', dtick=1)
 
     return fig
+
+
+def own_inflation_graph(inflation_yearly_data, category_weights):
+
+    inflation_in_all_categories = inflation_yearly_data.get_inflation_in_all_categories()
+    del inflation_in_all_categories['ogółem']
+    year_list = inflation_yearly_data.get_year_list()
+    own_inflation = {}
+
+    for year in year_list:
+        amount = 0
+        for category_name, category_inflation in inflation_in_all_categories.items():
+            print(category_inflation[year])
+            print(category_weights[category_name])
+            multiplication = category_inflation[year] * float(category_weights[category_name])
+            amount += multiplication
+        yearly_own_inflation = round(amount / 100, 1)
+        own_inflation[year] = yearly_own_inflation
+
+    data_dict = {'x': year_list, 'inflacja ogolna': inflation_yearly_data.general_inflation.values(),
+                 'inflacja wlasna': own_inflation.values()}
+
+    df = pd.DataFrame(data_dict)
+    selected_categories = ['inflacja ogolna', 'inflacja wlasna']
+
+    fig = px.line(df, x='x', y=selected_categories,
+                  title="Wartość własnej inflacji",
+                  labels={'x': 'Rok', 'y': 'Inflacja r/r [%]'})
+
+    fig.update_layout(title={
+        'font_size': 22,
+        'xanchor': 'center',
+        'x': 0.5
+    })
+    fig.update_xaxes(tickmode='linear', dtick=1)
+
+    return fig
+
+
+
+
+

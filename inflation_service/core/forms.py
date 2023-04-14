@@ -41,3 +41,24 @@ class CategorySelectForm(forms.Form):
 
         if end_year <= start_year:
             raise forms.ValidationError("Rok końcowy musi być rokiem póżniejszym niż rok początkowy!")
+
+
+class OwnInflationForm(forms.Form):
+
+    def __init__(self, fields_list, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in fields_list:
+            self.fields[field_name] = forms.IntegerField()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        try:
+            sum_of_weights = sum(cleaned_data.values())
+            if sum_of_weights != 100:
+                raise forms.ValidationError("Suma wag musi być równa 100!")
+        except TypeError:
+            raise forms.ValidationError("Wpisane wartości muszą być liczbami!")
+
+
+
+
